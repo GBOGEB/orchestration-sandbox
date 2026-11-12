@@ -1,0 +1,120 @@
+{
+  "checks": [
+    "K01-K17",
+    "deterministic classify",
+    "same population across workers"
+  ],
+  "dataset": "SYNTHETIC_CONTRACT_FIXTURES_NOT_REAL_MASTER_INPUT",
+  "purpose": "Contract-validation throughput and parallelism smoke, not SVG/PPTX parser performance",
+  "runs": [
+    {
+      "classifications": {
+        "FAIL_CLOSED": 0,
+        "PASS_CONTRACT_ONLY": 10
+      },
+      "documents": 10,
+      "injected_false_direction_count": 0,
+      "median_wall_s": 0.000365,
+      "throughput_files_per_s": 27416.2,
+      "trials": 3,
+      "workers": 1
+    },
+    {
+      "classifications": {
+        "FAIL_CLOSED": 0,
+        "PASS_CONTRACT_ONLY": 10
+      },
+      "documents": 10,
+      "injected_false_direction_count": 0,
+      "median_wall_s": 0.002584,
+      "throughput_files_per_s": 3869.3,
+      "trials": 3,
+      "workers": 4
+    },
+    {
+      "classifications": {
+        "FAIL_CLOSED": 0,
+        "PASS_CONTRACT_ONLY": 10
+      },
+      "documents": 10,
+      "injected_false_direction_count": 0,
+      "median_wall_s": 0.002773,
+      "throughput_files_per_s": 3605.6,
+      "trials": 3,
+      "workers": 8
+    },
+    {
+      "classifications": {
+        "FAIL_CLOSED": 3,
+        "PASS_CONTRACT_ONLY": 47
+      },
+      "documents": 50,
+      "injected_false_direction_count": 3,
+      "median_wall_s": 0.001308,
+      "throughput_files_per_s": 38215.3,
+      "trials": 3,
+      "workers": 1
+    },
+    {
+      "classifications": {
+        "FAIL_CLOSED": 3,
+        "PASS_CONTRACT_ONLY": 47
+      },
+      "documents": 50,
+      "injected_false_direction_count": 3,
+      "median_wall_s": 0.007031,
+      "throughput_files_per_s": 7111.3,
+      "trials": 3,
+      "workers": 4
+    },
+    {
+      "classifications": {
+        "FAIL_CLOSED": 3,
+        "PASS_CONTRACT_ONLY": 47
+      },
+      "documents": 50,
+      "injected_false_direction_count": 3,
+      "median_wall_s": 0.009553,
+      "throughput_files_per_s": 5233.9,
+      "trials": 3,
+      "workers": 8
+    },
+    {
+      "classifications": {
+        "FAIL_CLOSED": 15,
+        "PASS_CONTRACT_ONLY": 185
+      },
+      "documents": 200,
+      "injected_false_direction_count": 15,
+      "median_wall_s": 0.00765,
+      "throughput_files_per_s": 26142.8,
+      "trials": 3,
+      "workers": 1
+    },
+    {
+      "classifications": {
+        "FAIL_CLOSED": 15,
+        "PASS_CONTRACT_ONLY": 185
+      },
+      "documents": 200,
+      "injected_false_direction_count": 15,
+      "median_wall_s": 0.033789,
+      "throughput_files_per_s": 5919.2,
+      "trials": 3,
+      "workers": 4
+    },
+    {
+      "classifications": {
+        "FAIL_CLOSED": 15,
+        "PASS_CONTRACT_ONLY": 185
+      },
+      "documents": 200,
+      "injected_false_direction_count": 15,
+      "median_wall_s": 0.033154,
+      "throughput_files_per_s": 6032.4,
+      "trials": 3,
+      "workers": 8
+    }
+  ],
+  "scale_admission": "NOT_QUALIFIED_FOR_PRODUCTION"
+}

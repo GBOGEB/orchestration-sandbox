@@ -1,0 +1,41 @@
+{
+  "contract_version": "gg-semantic-1.0",
+  "source": {
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "locator": "synthetic://slide-1.pptx",
+    "producer": "pptx-existing-adapter"
+  },
+  "nodes": [
+    {
+      "id": "eq:P-101",
+      "source_object_id": "pptx:eq:P-101",
+      "label": "P-101"
+    },
+    {
+      "id": "eq:HX-201",
+      "source_object_id": "pptx:eq:HX-201",
+      "label": "HX-201"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge:flow-001",
+      "source_id": "eq:P-101",
+      "target_id": "eq:HX-201",
+      "state": "CANDIDATE",
+      "direction": "SOURCE_TO_TARGET",
+      "relationship": "FLOW",
+      "explicit_endpoints": true,
+      "evidence": [
+        {
+          "type": "PPTX_TAIL_END",
+          "locator": "pptx:slide-1:connector-9"
+        }
+      ],
+      "legend": {
+        "verified": true,
+        "locator": "pptx:slide-1:legend-2"
+      }
+    }
+  ]
+}

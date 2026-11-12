@@ -1,0 +1,12 @@
+{
+  "jobs": [
+    {"id":"W0-census","depends_on":[]},
+    {"id":"W1A-svg","depends_on":["W0-census"]},
+    {"id":"W1B-pptx","depends_on":["W0-census"]},
+    {"id":"W2-graph","depends_on":["W1A-svg","W1B-pptx"]},
+    {"id":"W3A-dow-negative","depends_on":["W2-graph"]},
+    {"id":"W3B-render","depends_on":["W2-graph"]},
+    {"id":"W4-keb-receipt","depends_on":["W3A-dow-negative","W3B-render"]},
+    {"id":"W5-scale","depends_on":["W4-keb-receipt"]}
+  ]
+}

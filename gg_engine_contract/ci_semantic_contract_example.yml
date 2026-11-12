@@ -1,0 +1,31 @@
+# TEMPLATE ONLY: not installed or activated in any GitHub repository.
+name: gg-semantic-contract-pilot
+on:
+  pull_request:
+    paths:
+      - 'gg_engine_contract/**'
+      - '.github/workflows/gg-semantic-contract-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract-tests:
+    name: gg-semantic-contract-py${{ matrix.python-version }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # pinned v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Fail-closed contract tests
+        run: python -m unittest discover -s gg_engine_contract -p 'test_*.py' -v
+      - name: Reproducibility receipt
+        run: |
+          python gg_engine_contract/gg_contract.py gg_engine_contract/fixture_accepted_candidate.json \
+            --jobs gg_engine_contract/worker_dag.json \
+            --receipt gg_engine_contract/contract_receipt.json
+      # No source-data or engineering-authority claim is made by this template.

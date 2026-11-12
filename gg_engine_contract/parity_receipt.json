@@ -1,0 +1,12 @@
+{
+  "after_source_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "before_source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "comparison_sha256": "a35e0bbda546862d79cff753a471b2dcf4d321f9f31bf9e86922ce783f6ad1f2",
+  "disclaimer": "Does not assess pixel rendering, style fidelity, or engineering approval",
+  "edges_after": 1,
+  "edges_before": 1,
+  "findings": [],
+  "nodes_after": 2,
+  "nodes_before": 2,
+  "status": "PASS_SEMANTIC_PARITY_ONLY"
+}

@@ -4,6 +4,8 @@ on:
     paths:
       - 'gg_engine_contract/**'
       - '.github/workflows/gg-engine-w10-contract.yml'
+      - 'docs/gg_engine/**'
+      - 'README.md'
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,6 +26,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Synthetic contract/negative tests
         run: python -m unittest discover -s gg_engine_contract -p 'test_*.py' -v
+      - name: HTML navigator self-check (links, copy targets, public boundaries)
+        run: python -m unittest discover -s docs/gg_engine -p 'test_*.py' -v
       - name: Deterministic source ZIP self-test
         shell: bash
         run: |

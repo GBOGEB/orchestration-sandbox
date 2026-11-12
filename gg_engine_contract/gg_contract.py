@@ -137,17 +137,25 @@ def validate_manifest(doc: Mapping[str, Any]) -> List[Finding]:
     return found
 
 
-def receipt(doc: Mapping[str, Any]) -> Dict[str, Any]:
-    findings = validate_manifest(doc)
-    edges = doc.get("edges", [])
-    tally = Counter(e.get("state") for e in edges if isinstance(e, dict)) if isinstance(edges, list) else Counter()
+def receipt(doc: Any) -> Dict[str, Any]:
+    """Always return a receipt; malformed input yields FAIL_CLOSED, never a traceback."""
+    if isinstance(doc, Mapping):
+        findings = validate_manifest(doc)
+        nodes, edges, src = doc.get("nodes", []), doc.get("edges", []), doc.get("source")
+    else:
+        findings = [Finding("K03_TYPE", "$", "Manifest must be a JSON object")]
+        nodes, edges, src = [], [], None
+    # Count only validated arrays; K03_TYPE already reports any other value.
+    nodes = nodes if isinstance(nodes, list) else []
+    edges = edges if isinstance(edges, list) else []
+    tally = Counter(e.get("state") for e in edges if isinstance(e, dict))
     normalized = json.dumps(doc, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     return {
         "contract_version": CONTRACT_VERSION,
         "input_digest_sha256": hashlib.sha256(normalized).hexdigest(),
-        "source_sha256": doc.get("source", {}).get("sha256") if isinstance(doc.get("source"), dict) else None,
+        "source_sha256": src.get("sha256") if isinstance(src, dict) else None,
         "status": "PASS_CONTRACT_ONLY" if not findings else "FAIL_CLOSED",
-        "counts": {"nodes": len(doc.get("nodes", [])), "edges": len(edges),
+        "counts": {"nodes": len(nodes), "edges": len(edges),
                    "candidate": tally["CANDIDATE"], "golden": tally["GOLDEN"],
                    "unresolved": tally["UNRESOLVED"], "findings": len(findings)},
         "findings": [f.as_dict() for f in findings],

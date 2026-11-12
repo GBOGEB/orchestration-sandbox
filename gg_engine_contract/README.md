@@ -28,7 +28,9 @@ The deliberately reversed fixture `fixture_reversed_pptx.json` **must** fail clo
 
 ## Reproducible source ZIP
 
-`package_release.py` builds a deterministic archive of the current tracked package source, plus a SHA-256 manifest of all included files. It writes a package hash to stdout. No third-party Python dependencies are required.
+`package_release.py` builds a deterministic archive of the allowlisted package source (`RELEASE_FILES`), plus a SHA-256 manifest of all included files. Untracked local files in the folder are never packaged; `test_package_release.py` fails if the allowlist and the git-tracked files drift apart. It writes a package hash to stdout. No third-party Python dependencies are required.
+
+The repository's `.gitattributes` pins LF line endings, so a Windows checkout and the Linux CI runner produce the same ZIP bytes. A checkout made before that file existed keeps CRLF files until they are checked out again.
 
 ```powershell
 py -3 gg_engine_contract/package_release.py --output dist/gg_engine_w10_source.zip

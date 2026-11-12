@@ -1,4 +1,8 @@
 from copy import deepcopy
+import json
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 from gg_contract import from_path, validate_manifest, validate_worker_dag, receipt
@@ -98,6 +102,34 @@ class ContractNegativeTests(unittest.TestCase):
     def test_deterministic_receipt_digest(self):
         a = receipt(BASE); b = receipt(deepcopy(BASE))
         self.assertEqual(a, b)
+
+    def test_non_array_graph_fields_fail_closed_with_receipt(self):
+        for field in ("nodes", "edges"):
+            for bad in (None, "x", 5, {"id": "n1"}):
+                with self.subTest(field=field, value=bad):
+                    d = deepcopy(BASE); d[field] = bad
+                    r = receipt(d)
+                    self.assertEqual(r["status"], "FAIL_CLOSED")
+                    self.assertIn("K03_TYPE", {f["code"] for f in r["findings"]})
+                    self.assertEqual(r["counts"][field], 0)
+
+    def test_non_object_manifest_fails_closed_with_receipt(self):
+        for bad in ([], None, "manifest"):
+            with self.subTest(value=bad):
+                r = receipt(bad)
+                self.assertEqual(r["status"], "FAIL_CLOSED")
+                self.assertEqual([f["code"] for f in r["findings"]], ["K03_TYPE"])
+
+    def test_cli_writes_fail_closed_receipt_for_malformed_edges(self):
+        d = deepcopy(BASE); d["edges"] = None
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest = Path(tmp) / "bad.json"
+            out = Path(tmp) / "receipt.json"
+            manifest.write_text(json.dumps(d), encoding="utf-8")
+            proc = subprocess.run([sys.executable, str(ROOT / "gg_contract.py"), str(manifest),
+                                   "--receipt", str(out)], capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 1, proc.stderr)
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "FAIL_CLOSED")
 
 
 class ExecutionDagTests(unittest.TestCase):

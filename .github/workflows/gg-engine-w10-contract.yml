@@ -30,4 +30,6 @@ jobs:
           python gg_engine_contract/package_release.py --output "$RUNNER_TEMP/gg_engine_a.zip"
           python gg_engine_contract/package_release.py --output "$RUNNER_TEMP/gg_engine_b.zip"
           cmp "$RUNNER_TEMP/gg_engine_a.zip" "$RUNNER_TEMP/gg_engine_b.zip"
-          python -c "import zipfile; z=zipfile.ZipFile('/tmp/gg_engine_a.zip'); assert z.testzip() is None"
+          python -c 'import os, zipfile; p=os.path.join(os.environ["RUNNER_TEMP"], "gg_engine_a.zip"); z=zipfile.ZipFile(p); assert z.testzip() is None'
+          cmp "$RUNNER_TEMP/gg_engine_a.zip" dist/gg_engine_w10_source.zip
+          (cd dist && sha256sum -c SHA256SUMS.txt)

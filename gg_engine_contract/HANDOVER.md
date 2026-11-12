@@ -29,3 +29,7 @@ This is a public-safe copy of a previously generated synthetic gg_Engine W10 con
 ## Suggested target status
 
 `PUBLIC_STAGE_READY / SYNTHETIC_TESTED / REAL_SOURCE_UNTESTED / OWNER_ACCEPTANCE_HOLD`
+
+## GitHub source ZIP (optional)
+
+The source of truth is the checked-in files in this PR. A deterministic source ZIP is also committed under `dist/gg_engine_w10_source.zip` for one-click retrieval. Reproduce it byte-for-byte from the repository root with `python gg_engine_contract/package_release.py --output dist/gg_engine_w10_source.zip`. Compare SHA-256 against `dist/SHA256SUMS.txt`. The ZIP is synthetic-only and is not a real-source engineering acceptance record.

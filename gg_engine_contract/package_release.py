@@ -19,13 +19,13 @@ def write_archive(output):
     output = pathlib.Path(output).resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
     manifest = []
-    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_STORED) as archive:
         def put(name, content):
             info = zipfile.ZipInfo(name, date_time=(2026, 11, 12, 0, 0, 0))
             info.create_system = 3
             info.external_attr = 0o644 << 16
-            info.compress_type = zipfile.ZIP_DEFLATED
-            archive.writestr(info, content, compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
+            info.compress_type = zipfile.ZIP_STORED
+            archive.writestr(info, content, compress_type=zipfile.ZIP_STORED)
         for path in source_files():
             rel = path.relative_to(SOURCE).as_posix()
             body = path.read_bytes()

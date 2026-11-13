@@ -1,13 +1,17 @@
 """Stdlib-only integrity tests for the public W10 browser handover."""
 from __future__ import annotations
 
+import os
 import re
+import subprocess
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+REPO = ROOT.parent.parent
 PAGE = ROOT / "index.html"
+ZIP_PIN = re.compile(r"raw\.githubusercontent\.com/GBOGEB/orchestration-sandbox/([0-9a-f]{40})/dist/gg_engine_w10_source\.zip")
 
 
 class Scan(HTMLParser):
@@ -72,7 +76,28 @@ class HandoverPortalTests(unittest.TestCase):
         self.assertIn("gg_engine_contract/HANDOVER.md", self.page)
         self.assertIn("/dist/gg_engine_w10_source.zip", self.page)
         self.assertIn("/dist/SHA256SUMS.txt", self.page)
-        self.assertIn("8af69a99d60ca4fd131cb5827e134099a3e70c34", self.page)
+
+    def test_zip_links_share_one_pin_that_matches_current_checksums(self):
+        """Every commit-pinned ZIP link must serve the archive in dist/SHA256SUMS.txt.
+
+        A commit cannot link to itself, so after regenerating dist/ commit it first,
+        then repin README.md and index.html to that commit in a follow-up commit.
+        """
+        readme = (REPO / "README.md").read_text(encoding="utf-8")
+        pins = set(ZIP_PIN.findall(self.page)) | set(ZIP_PIN.findall(readme))
+        self.assertEqual(len(pins), 1, f"ZIP links must share one commit pin: {sorted(pins)}")
+        pin = pins.pop()
+        self.assertIn(f"Baseline <code>{pin[:8]}…</code>", self.page)
+        try:
+            proc = subprocess.run(["git", "show", f"{pin}:dist/SHA256SUMS.txt"], cwd=REPO,
+                                  capture_output=True, check=True)
+        except (OSError, subprocess.CalledProcessError):
+            if os.environ.get("CI"):
+                self.fail(f"Pinned commit {pin} is not in the checkout (CI needs fetch-depth: 0)")
+            self.skipTest("pinned commit not available in this checkout")
+        current = (REPO / "dist" / "SHA256SUMS.txt").read_bytes()
+        self.assertEqual(proc.stdout.replace(b"\r\n", b"\n"), current.replace(b"\r\n", b"\n"),
+                         f"ZIP pinned at {pin} is not the archive listed in dist/SHA256SUMS.txt")
 
     def test_public_only_no_undisclosed_private_references(self):
         for prohibited in ("GBOGEB/cryoplant-project", "GBOGEB/MINERVA_PID",

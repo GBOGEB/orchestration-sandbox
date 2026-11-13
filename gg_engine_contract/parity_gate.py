@@ -10,16 +10,32 @@ from typing import Any, Mapping
 from gg_contract import Finding, from_path, validate_manifest
 
 
-def compare_graphs(before: Mapping[str, Any], after: Mapping[str, Any]) -> dict:
+def _by_id(graph: Any, field: str) -> dict:
+    """Index array entries by string id. Malformed values are already K21 findings,
+    so they are skipped here instead of raising (fail closed, never a traceback)."""
+    value = graph.get(field, []) if isinstance(graph, Mapping) else []
+    if not isinstance(value, list):
+        return {}
+    return {v["id"]: v for v in value if isinstance(v, dict) and isinstance(v.get("id"), str)}
+
+
+def _source_sha(graph: Any) -> str:
+    src = graph.get("source") if isinstance(graph, Mapping) else None
+    sha = src.get("sha256", "") if isinstance(src, dict) else ""
+    return sha if isinstance(sha, str) else ""
+
+
+def compare_graphs(before: Any, after: Any) -> dict:
     """Structural/semantic invariant comparison, not pixel/fidelity comparison."""
     findings = []
     for label, graph in (("before", before), ("after", after)):
+        if not isinstance(graph, Mapping):
+            findings.append(Finding("K21_SOURCE_CONTRACT", f"{label}.$", "K03_TYPE: Manifest must be a JSON object"))
+            continue
         for item in validate_manifest(graph):
             findings.append(Finding("K21_SOURCE_CONTRACT", f"{label}.{item.location}", item.code + ": " + item.message))
-    bn = {v.get("id"):v for v in before.get("nodes",[]) if isinstance(v,dict)}
-    an = {v.get("id"):v for v in after.get("nodes",[]) if isinstance(v,dict)}
-    be = {v.get("id"):v for v in before.get("edges",[]) if isinstance(v,dict)}
-    ae = {v.get("id"):v for v in after.get("edges",[]) if isinstance(v,dict)}
+    bn, an = _by_id(before, "nodes"), _by_id(after, "nodes")
+    be, ae = _by_id(before, "edges"), _by_id(after, "edges")
     if set(bn) - set(an):
         findings.append(Finding("K22_LOST_NODE", "nodes", f"Missing semantic nodes: {sorted(set(bn)-set(an))}"))
     if set(an) - set(bn):
@@ -37,7 +53,7 @@ def compare_graphs(before: Mapping[str, Any], after: Mapping[str, Any]) -> dict:
             findings.append(Finding("K27_SEMANTIC_DRIFT", f"edges.{eid}.relationship", "Meaning changed between formats"))
         if be[eid].get("state") != ae[eid].get("state"):
             findings.append(Finding("K28_REVIEW_DRIFT", f"edges.{eid}.state", "Review state changed between formats"))
-    hashes = [g.get("source", {}).get("sha256", "") for g in (before,after)]
+    hashes = [_source_sha(g) for g in (before, after)]
     joined = json.dumps({"input_sha256":hashes,"nodes":sorted(bn),"edges":sorted(be)},sort_keys=True).encode()
     return {"status": "PASS_SEMANTIC_PARITY_ONLY" if not findings else "FAIL_CLOSED",
             "comparison_sha256": hashlib.sha256(joined).hexdigest(),

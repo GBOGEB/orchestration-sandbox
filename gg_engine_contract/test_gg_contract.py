@@ -120,6 +120,14 @@ class ContractNegativeTests(unittest.TestCase):
                 self.assertEqual(r["status"], "FAIL_CLOSED")
                 self.assertEqual([f["code"] for f in r["findings"]], ["K03_TYPE"])
 
+    def test_unhashable_values_fail_closed_with_receipt(self):
+        for field in ("source_id", "target_id", "state", "direction", "relationship"):
+            with self.subTest(field=field):
+                d = deepcopy(BASE); d["edges"][0][field] = ["x"]
+                self.assertEqual(receipt(d)["status"], "FAIL_CLOSED")
+        d = deepcopy(BASE); d["edges"][0]["evidence"] = [{"type": ["PPTX_HEAD_END"], "locator": "x"}]
+        self.assertIn("K12_DIRECTION_PROOF", errors(d))
+
     def test_cli_writes_fail_closed_receipt_for_malformed_edges(self):
         d = deepcopy(BASE); d["edges"] = None
         with tempfile.TemporaryDirectory() as tmp:

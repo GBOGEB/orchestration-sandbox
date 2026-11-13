@@ -1,3 +1,7 @@
+import json
+import subprocess
+import sys
+import tempfile
 import unittest
 from copy import deepcopy
 from pathlib import Path
@@ -49,6 +53,36 @@ class ParityAndCacheTests(unittest.TestCase):
     def test_review_state_promotion_is_failed(self):
         a=self.crossformat();a["edges"][0]["state"]="GOLDEN"
         self.assertIn("K28_REVIEW_DRIFT",self.codes(a))
+
+    def test_non_array_fields_fail_closed_without_traceback(self):
+        for side in ("before", "after"):
+            for field in ("nodes", "edges"):
+                for bad in (None, "x", 5, {"id": "n1"}):
+                    with self.subTest(side=side, field=field, value=bad):
+                        a, b = deepcopy(BASE), self.crossformat()
+                        (a if side == "before" else b)[field] = bad
+                        r = compare_graphs(a, b)
+                        self.assertEqual(r["status"], "FAIL_CLOSED")
+                        self.assertIn("K21_SOURCE_CONTRACT", {x["code"] for x in r["findings"]})
+
+    def test_malformed_documents_fail_closed_without_traceback(self):
+        no_id = self.crossformat(); no_id["nodes"].append({"source_object_id": "pptx:x"})
+        bad_source = self.crossformat(); bad_source["source"] = "not-an-object"
+        for bad in ([], None, no_id, bad_source):
+            with self.subTest(value=bad):
+                self.assertEqual(compare_graphs(BASE, bad)["status"], "FAIL_CLOSED")
+
+    def test_cli_writes_fail_closed_parity_receipt_for_null_edges(self):
+        bad = self.crossformat(); bad["edges"] = None
+        with tempfile.TemporaryDirectory() as tmp:
+            before, after, out = (Path(tmp) / n for n in ("before.json", "after.json", "receipt.json"))
+            before.write_text(json.dumps(BASE), encoding="utf-8")
+            after.write_text(json.dumps(bad), encoding="utf-8")
+            proc = subprocess.run([sys.executable, str(Path(__file__).with_name("parity_gate.py")),
+                                   str(before), str(after), "--receipt", str(out)],
+                                  capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 1, proc.stderr)
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "FAIL_CLOSED")
 
     def test_cache_key_deterministic(self):
         a=make_cache_key("a"*64,"svg-v1","b"*64)

@@ -1,0 +1,83 @@
+name: gg-engine-w12-convergence
+on:
+  pull_request:
+    paths:
+      - 'gg_engine_w12/**'
+      - 'gg_engine_w11/**'
+      - 'gg_engine_contract/**'
+      - '.github/workflows/gg-engine-w12-convergence.yml'
+      - 'dist/gg_engine_w12_demo.zip'
+      - 'dist/SHA256SUMS_W12.txt'
+      - 'docs/gg_engine/w12/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract-and-roundtrip:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # checkout v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # setup-python v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: W10 shared semantic and adversarial tests
+        run: python -m unittest discover -s gg_engine_contract -p 'test_*.py' -v
+      - name: W11 native reader tests (unchanged ownership)
+        run: python -m unittest discover -s gg_engine_w11 -p 'test_*.py' -v
+      - name: W12 evidence, HTML, native-OOXML roundtrip, and negative tests
+        run: python -m unittest discover -s gg_engine_w12 -p 'test_*.py' -v
+      - name: Build synthetic OOXML-SVG-HTML proof and verify hashes
+        shell: bash
+        run: |
+          python gg_engine_w12/pilot.py --out "$RUNNER_TEMP/w12-demo"
+          (cd "$RUNNER_TEMP/w12-demo" && sha256sum -c SHA256SUMS.txt)
+          python -c 'import os,zipfile; p=os.path.join(os.environ["RUNNER_TEMP"],"w12-demo","gg_engine_w12_demo.zip"); z=zipfile.ZipFile(p); assert z.testzip() is None'
+  dow-native-layered-pdf:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # checkout v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: GBOGEB/ABACUS
+          ref: eca6782f9850b61c083c25a03371a7be74aa0a98
+          path: _dow/ABACUS
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: '3.12'
+      - name: Pinned DOW native-PDF dependencies
+        run: python -m pip install 'PyMuPDF==1.26.4' 'CairoSVG==2.8.2' 'numpy==2.3.3' 'lxml==6.0.2' 'Pillow==11.3.0'
+      - name: Build nested-OCG PDF with the existing ABACUS engine and independent fidelity oracle
+        shell: bash
+        run: |
+          python gg_engine_w12/pilot.py --out "$RUNNER_TEMP/w12-dow" --abacus-root "$GITHUB_WORKSPACE/_dow/ABACUS"
+          (cd "$RUNNER_TEMP/w12-dow" && sha256sum -c SHA256SUMS.txt)
+          python -c 'import os,fitz; p=os.path.join(os.environ["RUNNER_TEMP"],"w12-dow","layered.pdf"); d=fitz.open(p); assert len(d)>0 and len(d.get_ocgs())>=1'
+      - name: Check committed W12 binaries and review page against this exact native build
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmp "$RUNNER_TEMP/w12-dow/gg_engine_w12_demo.zip" dist/gg_engine_w12_demo.zip
+          (cd dist && sha256sum -c SHA256SUMS_W12.txt)
+          for n in source.svg roundtrip.svg from_svg.pptx layered.pdf flat_baseline.pdf index.html SHA256SUMS.txt dow_fidelity_receipt.json roundtrip_receipt.json; do
+            cmp "$RUNNER_TEMP/w12-dow/$n" "docs/gg_engine/w12/$n"
+          done
+          python -c 'import json; r=json.load(open("docs/gg_engine/w12/QA_RECEIPT.json")); assert r["checks"]["owner_semantic_acceptance"]=="DEFER"'
+      - name: Save reviewed native artifacts and receipts (not owner evidence)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # upload-artifact v7
+        with:
+          name: gg-engine-w12-synthetic-native-proof
+          path: ${{ runner.temp }}/w12-dow/
+          if-no-files-found: warn
+          retention-days: 14

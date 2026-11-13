@@ -1,0 +1,13 @@
+{
+  "abacus_svg_engine": {
+    "repository": "GBOGEB/ABACUS",
+    "pr": 2745,
+    "head_sha": "eca6782f9850b61c083c25a03371a7be74aa0a98",
+    "module": "DMAIC_V3.svg_engine",
+    "status": "UNMERGED_WITH_RED_ADMISSION_GATE",
+    "use": "REVIEW_ONLY_IMPORT_NO_UPSTREAM_MUTATION"
+  },
+  "gg_contract": "merged W10 in orchestration-sandbox main",
+  "native_adapters": "merged W11 in orchestration-sandbox main",
+  "owner_evidence": "NOT_INCLUDED_PUBLIC_REPOSITORY"
+}

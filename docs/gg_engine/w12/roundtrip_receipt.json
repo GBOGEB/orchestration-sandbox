@@ -1,0 +1,19 @@
+{
+  "claim": "NATIVE_OOXML_SVG_SEMANTIC_ROUNDTRIP_SYNTHETIC_ONLY",
+  "dow": "PASS_REVIEW_ONLY",
+  "graph_edges": 1,
+  "graph_nodes": 2,
+  "graph_pptx_to_svg": "PASS_SEMANTIC_PARITY_ONLY",
+  "graph_source_to_pptx": "PASS_SEMANTIC_PARITY_ONLY",
+  "independent_human_review": "OPEN",
+  "input_svg_sha256": "7a8f49e8fe3ccf21c3a8ebac31e99caed6dbfa5c53ec903bc34cf0c457338560",
+  "native_inkscape_open": "NOT_TESTED",
+  "native_powerpoint_open": "NOT_TESTED",
+  "no_private_sources": true,
+  "owner_acceptance": "HOLD",
+  "pptx_sha256": "dd3ef2249062916adca1c7cadea72bae15221fcca47ded4626c2ffec0d863a85",
+  "real_owner_binary_test": "NOT_RUN",
+  "roundtrip_svg_sha256": "7a8f49e8fe3ccf21c3a8ebac31e99caed6dbfa5c53ec903bc34cf0c457338560",
+  "schema": "gg-w12-convergence-0.1",
+  "source_type": "SYNTHETIC_NATIVE_FORMAT_BYTES"
+}

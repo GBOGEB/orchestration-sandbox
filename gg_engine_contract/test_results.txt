@@ -1,0 +1,41 @@
+test_arrowhead_without_legend_cannot_claim_flow (test_gg_contract.ContractNegativeTests.test_arrowhead_without_legend_cannot_claim_flow) ... ok
+test_bad_source_sha_rejected (test_gg_contract.ContractNegativeTests.test_bad_source_sha_rejected) ... ok
+test_bad_taxonomy_rejected (test_gg_contract.ContractNegativeTests.test_bad_taxonomy_rejected) ... ok
+test_deterministic_receipt_digest (test_gg_contract.ContractNegativeTests.test_deterministic_receipt_digest) ... ok
+test_duplicate_edge_rejected (test_gg_contract.ContractNegativeTests.test_duplicate_edge_rejected) ... ok
+test_duplicate_node_rejected (test_gg_contract.ContractNegativeTests.test_duplicate_node_rejected) ... ok
+test_empty_evidence_rejected (test_gg_contract.ContractNegativeTests.test_empty_evidence_rejected) ... ok
+test_geometry_only_not_arrowhead (test_gg_contract.ContractNegativeTests.test_geometry_only_not_arrowhead) ... ok
+test_golden_requires_owner_decision (test_gg_contract.ContractNegativeTests.test_golden_requires_owner_decision) ... ok
+test_missing_endpoint_rejected (test_gg_contract.ContractNegativeTests.test_missing_endpoint_rejected) ... ok
+test_neighbour_order_not_arrowhead (test_gg_contract.ContractNegativeTests.test_neighbour_order_not_arrowhead) ... ok
+test_no_anchor_rejected (test_gg_contract.ContractNegativeTests.test_no_anchor_rejected) ... ok
+test_no_native_source_id_rejected (test_gg_contract.ContractNegativeTests.test_no_native_source_id_rejected) ... ok
+test_relationship_unknown_does_not_require_legend (test_gg_contract.ContractNegativeTests.test_relationship_unknown_does_not_require_legend) ... ok
+test_source_bound_approval_contract_passes (test_gg_contract.ContractNegativeTests.test_source_bound_approval_contract_passes) ... ok
+test_stale_approval_rejected (test_gg_contract.ContractNegativeTests.test_stale_approval_rejected) ... ok
+test_unresolved_preserved (test_gg_contract.ContractNegativeTests.test_unresolved_preserved) ... ok
+test_unresolved_with_direction_rejected (test_gg_contract.ContractNegativeTests.test_unresolved_with_direction_rejected) ... ok
+test_unresolved_without_reason_is_rejected (test_gg_contract.ContractNegativeTests.test_unresolved_without_reason_is_rejected) ... ok
+test_verified_candidate_passes (test_gg_contract.ContractNegativeTests.test_verified_candidate_passes) ... ok
+test_cycle_blocked (test_gg_contract.ExecutionDagTests.test_cycle_blocked) ... ok
+test_duplicate_job_id_blocked (test_gg_contract.ExecutionDagTests.test_duplicate_job_id_blocked) ... ok
+test_missing_dependency_blocked (test_gg_contract.ExecutionDagTests.test_missing_dependency_blocked) ... ok
+test_scheduled_pipeline_is_acyclic (test_gg_contract.ExecutionDagTests.test_scheduled_pipeline_is_acyclic) ... ok
+test_cache_invalidates_on_adapter_change (test_parity_and_cache.ParityAndCacheTests.test_cache_invalidates_on_adapter_change) ... ok
+test_cache_invalidates_on_legend_change (test_parity_and_cache.ParityAndCacheTests.test_cache_invalidates_on_legend_change) ... ok
+test_cache_invalidates_on_source_change (test_parity_and_cache.ParityAndCacheTests.test_cache_invalidates_on_source_change) ... ok
+test_cache_key_deterministic (test_parity_and_cache.ParityAndCacheTests.test_cache_key_deterministic) ... ok
+test_changed_meaning_is_failed (test_parity_and_cache.ParityAndCacheTests.test_changed_meaning_is_failed) ... ok
+test_lost_edge_is_failed (test_parity_and_cache.ParityAndCacheTests.test_lost_edge_is_failed) ... ok
+test_lost_node_is_failed (test_parity_and_cache.ParityAndCacheTests.test_lost_node_is_failed) ... ok
+test_missing_legend_hash_fails (test_parity_and_cache.ParityAndCacheTests.test_missing_legend_hash_fails) ... ok
+test_new_ghost_edge_is_failed (test_parity_and_cache.ParityAndCacheTests.test_new_ghost_edge_is_failed) ... ok
+test_reversed_direction_is_failed (test_parity_and_cache.ParityAndCacheTests.test_reversed_direction_is_failed) ... ok
+test_review_state_promotion_is_failed (test_parity_and_cache.ParityAndCacheTests.test_review_state_promotion_is_failed) ... ok
+test_same_semantics_with_distinct_format_locators_passes (test_parity_and_cache.ParityAndCacheTests.test_same_semantics_with_distinct_format_locators_passes) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 0.002s
+
+OK

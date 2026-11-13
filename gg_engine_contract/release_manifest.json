@@ -1,0 +1,38 @@
+{
+  "name": "gg_Engine_W10_semantic_admission_contract",
+  "version": "0.2.0-prototype",
+  "execution_date": "2026-11-12",
+  "scope": "generic, read-only semantic contract tests and synthetic scaling; no upstream repo changes",
+  "ci_status": "LOCAL_UNIT_TESTS_PASS",
+  "tests": {
+    "passed": 36,
+    "failed": 0
+  },
+  "benchmarks": {
+    "populations": [
+      10,
+      50,
+      200
+    ],
+    "worker_counts": [
+      1,
+      4,
+      8
+    ],
+    "runs": 9,
+    "injected_errors_at_200": 15,
+    "all_detected": true,
+    "production_qualified": false
+  },
+  "known_gaps": [
+    "No real source-root census",
+    "No real PPTX/SVG roundtrip",
+    "No merged external adapter code",
+    "No owner semantic acceptance",
+    "No live external CI run for this prototype"
+  ],
+  "crossformat_fixture": "synthetic SVG -> synthetic PPTX correspondence; independent native locators and file SHA",
+  "negative_parity_probe": "reversed PPTX direction failed closed with exit=1",
+  "test_results": "36/36 pass",
+  "public_staging_scope": "synthetic-only, no private source records, no real diagram input"
+}

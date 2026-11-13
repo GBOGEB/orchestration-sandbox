@@ -1,0 +1,20 @@
+{
+  "contract_version": "gg-semantic-1.0",
+  "counts": {
+    "candidate": 1,
+    "edges": 1,
+    "findings": 0,
+    "golden": 0,
+    "nodes": 2,
+    "unresolved": 0
+  },
+  "disclaimer": "Contract PASS does not authorize engineering semantics, rendering fidelity, or merge admission",
+  "findings": [],
+  "input_digest_sha256": "d5d9d2ef6fd66076d1bdddf63d6a9a81aca997ffd9acae244d5a9b03d195ac00",
+  "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "status": "PASS_CONTRACT_ONLY",
+  "worker_dag": {
+    "findings": [],
+    "status": "PASS"
+  }
+}

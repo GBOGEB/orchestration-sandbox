@@ -1,0 +1,25 @@
+{
+  "contract_version": "gg-semantic-1.0",
+  "source": {
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "locator": "synthetic://slide-1.svg",
+    "producer": "svg-existing-adapter"
+  },
+  "nodes": [
+    {"id": "eq:P-101", "source_object_id": "svg:p101", "label": "P-101"},
+    {"id": "eq:HX-201", "source_object_id": "svg:hx201", "label": "HX-201"}
+  ],
+  "edges": [
+    {
+      "id": "edge:flow-001",
+      "source_id": "eq:P-101",
+      "target_id": "eq:HX-201",
+      "state": "CANDIDATE",
+      "direction": "SOURCE_TO_TARGET",
+      "relationship": "FLOW",
+      "explicit_endpoints": true,
+      "evidence": [{"type": "SVG_MARKER_END", "locator": "svg:path-001@marker-end"}],
+      "legend": {"verified": true, "locator": "svg:legend-001"}
+    }
+  ]
+}

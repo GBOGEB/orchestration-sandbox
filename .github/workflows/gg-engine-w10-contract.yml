@@ -1,0 +1,39 @@
+name: gg-engine-w10-contract
+on:
+  pull_request:
+    paths:
+      - 'gg_engine_contract/**'
+      - '.github/workflows/gg-engine-w10-contract.yml'
+      - 'docs/gg_engine/**'
+      - 'README.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  semantic-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Synthetic contract/negative tests
+        run: python -m unittest discover -s gg_engine_contract -p 'test_*.py' -v
+      - name: HTML navigator self-check (links, copy targets, public boundaries)
+        run: python -m unittest discover -s docs/gg_engine -p 'test_*.py' -v
+      - name: Deterministic source ZIP self-test
+        shell: bash
+        run: |
+          python gg_engine_contract/package_release.py --output "$RUNNER_TEMP/gg_engine_a.zip"
+          python gg_engine_contract/package_release.py --output "$RUNNER_TEMP/gg_engine_b.zip"
+          cmp "$RUNNER_TEMP/gg_engine_a.zip" "$RUNNER_TEMP/gg_engine_b.zip"
+          python -c 'import os, zipfile; p=os.path.join(os.environ["RUNNER_TEMP"], "gg_engine_a.zip"); z=zipfile.ZipFile(p); assert z.testzip() is None'
+          cmp "$RUNNER_TEMP/gg_engine_a.zip" dist/gg_engine_w10_source.zip
+          (cd dist && sha256sum -c SHA256SUMS.txt)

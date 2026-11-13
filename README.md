@@ -14,7 +14,7 @@ If your browser displays a one-time safety confirmation from the independent HTM
 | Browse the Python engine | [gg_engine_contract/](gg_engine_contract/) |
 | Inspect the browser cockpit | [docs/gg_engine/index.html](docs/gg_engine/index.html) |
 | Inspect HTML QA tests | [docs/gg_engine/test_portal.py](docs/gg_engine/test_portal.py) |
-| Download the ZIP | [Direct GitHub ZIP](https://raw.githubusercontent.com/GBOGEB/orchestration-sandbox/8af69a99d60ca4fd131cb5827e134099a3e70c34/dist/gg_engine_w10_source.zip) |
+| Download the ZIP | [Direct GitHub ZIP](https://raw.githubusercontent.com/GBOGEB/orchestration-sandbox/f13d993db7e8e7dd90ecbbe3789010b0e0b0d3c7/dist/gg_engine_w10_source.zip) |
 | Verify checksums | [SHA256SUMS.txt](dist/SHA256SUMS.txt) |
 | Check native CI | [gg-engine-w10-contract](../../actions/workflows/gg-engine-w10-contract.yml) |
 | Read the PR / continue W11 | [PR #2](../../pull/2) |

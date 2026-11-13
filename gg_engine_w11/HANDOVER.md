@@ -3,7 +3,7 @@
 ## Base and containment
 
 - Branched from `handover/gg-engine-w10-semantic-contract-v0p2` at `8af69a99d60ca4fd131cb5827e134099a3e70c34`.
-- `gg_engine_contract/` and `dist/` are unchanged, so the W10 source ZIP still rebuilds to `75501d4b46505b27b2fca857452f94c31e28e7e4f86b30bf6e5df43ba6f07f48` from an LF checkout.
+- W11 does not touch `gg_engine_contract/` or `dist/`. The W11 workflow rebuilds the W10 ZIP and byte-compares it with whatever `dist/` holds on the PR merge ref. The W10 lane owns that ZIP and its hash, which changed when the W10 review fixes landed.
 - Public-safe: generic code and synthetic fixtures only. No private drawings, project names, repository pins or credentials.
 - **Do not merge, and do not treat these synthetic results as engineering acceptance.** Keep the PR draft until exact-head CI is green on 3.9 and 3.12, an independent DOW review has run, and the owner has decided.
 

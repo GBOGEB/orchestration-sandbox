@@ -54,6 +54,43 @@ class RoundtripTests(unittest.TestCase):
             with zipfile.ZipFile(Path(t)/'from_svg.pptx') as z:
                 self.assertIn('ppt/slides/slide1.xml',z.namelist())
 
+    def test_layout_keeps_semantic_native_ids_with_readable_positions(self):
+        from xml.etree import ElementTree as ET
+        from zipfile import ZipFile
+        from io import BytesIO
+        source = pilot._layout_svg(fx.svg_flow())
+        self.assertIn(b'id="layer1"', source)
+        self.assertIn(b'id="layer2"', source)
+        self.assertIn(b'inkscape:connection-start="#p101"', source)
+        self.assertIn(b'inkscape:connection-end="#hx201"', source)
+        self.assertIn(b'd="M 125,65 L 275,65"', source)
+        self.assertIn(b'transform="translate(20,135)"', source)
+        self.assertIn(b'font-family="DejaVu Sans"', source)
+        out = emit_pptx(initial())
+        with ZipFile(BytesIO(out)) as z:
+            slide = ET.fromstring(z.read('ppt/slides/slide1.xml'))
+        ns = {'p':'http://schemas.openxmlformats.org/presentationml/2006/main',
+              'a':'http://schemas.openxmlformats.org/drawingml/2006/main'}
+        where = {}
+        for element in slide.findall('.//p:sp', ns):
+            native = element.find('p:nvSpPr/p:cNvPr', ns)
+            if native is None:continue
+            off = element.find('p:spPr/a:xfrm/a:off',ns)
+            ext = element.find('p:spPr/a:xfrm/a:ext',ns)
+            where[native.get('id')] = (int(off.get('x')), int(off.get('y')),
+                                      int(ext.get('cx')), int(ext.get('cy')))
+        self.assertEqual(len(where), 3)
+        self.assertEqual(where['4'], (1000000,2100000,1600000,750000))
+        self.assertEqual(where['5'], (6000000,2100000,2000000,750000))
+        self.assertEqual(where['12'],(1000000,4500000,3800000,850000))
+        self.assertGreater(where['5'][0], where['4'][0]+where['4'][2])
+        self.assertGreater(where['12'][1], where['4'][1]+where['4'][3])
+        self.assertEqual(read_pptx(out,legend=fx.pptx_legend(out))['edges'][0]['state'], 'CANDIDATE')
+
+    def test_layout_fixture_drift_refused(self):
+        with self.assertRaisesRegex(ValueError,'SYNTHETIC_FIXTURE_LAYOUT_DRIFT'):
+            pilot._layout_svg(b'<svg/>')
+
     def test_deterministic_zip_rebuild(self):
         with tempfile.TemporaryDirectory() as t:
             run(t)

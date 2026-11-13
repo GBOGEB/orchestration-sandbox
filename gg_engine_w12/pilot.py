@@ -76,7 +76,20 @@ def _layout_svg(raw):
         if raw.count(before) != expected:
             raise ValueError('SYNTHETIC_FIXTURE_LAYOUT_DRIFT:' + before[:48].decode('ascii'))
         raw = raw.replace(before, after, limit)
+    # Explicit nested hidden parent/visible child: exercises independent DOW
+    # K4113/K4114 parent-cascade semantics instead of leaving both as NA.
+    tail = (b'</g><g id="layer2" inkscape:groupmode="layer" '
+            b'inkscape:label="Legend" transform="translate(20,135)">')
+    if raw.count(tail) != 1:
+        raise ValueError('SYNTHETIC_FIXTURE_LAYOUT_DRIFT:layer_closure')
+    hidden = (b'<g id="layer1-hidden" inkscape:groupmode="layer" '
+              b'inkscape:label="Hidden AUX" style="display:none">'
+              b'<g id="layer1-hidden-child" inkscape:groupmode="layer" '
+              b'inkscape:label="Aux Note"><text x="245" y="150">AUX</text>'
+              b'</g></g>')
+    raw = raw.replace(tail, hidden + tail, 1)
     return raw.replace(b'<text ', b'<text font-family="DejaVu Sans" font-size="13" ')
+
 
 
 def emit_pptx(graph):

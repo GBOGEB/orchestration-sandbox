@@ -6,6 +6,8 @@ on:
       - '.github/workflows/gg-engine-w10-contract.yml'
       - 'docs/gg_engine/**'
       - 'README.md'
+      - 'dist/**'
+      - '.gitattributes'
   workflow_dispatch:
 permissions:
   contents: read

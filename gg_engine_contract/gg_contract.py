@@ -36,6 +36,11 @@ def _sha_ok(value: Any) -> bool:
     return isinstance(value, str) and bool(HEX64.fullmatch(value))
 
 
+def _member(value: Any, allowed: Any) -> bool:
+    """Set membership that fails closed on unhashable JSON values (lists, objects)."""
+    return isinstance(value, str) and value in allowed
+
+
 def validate_manifest(doc: Mapping[str, Any]) -> List[Finding]:
     """Fail closed on unsupported graph claims, keep unresolved observations."""
     found: List[Finding] = []
@@ -92,24 +97,24 @@ def validate_manifest(doc: Mapping[str, Any]) -> List[Finding]:
         else:
             edge_ids.add(eid)
         u, v = edge.get("source_id"), edge.get("target_id")
-        if u not in node_ids or v not in node_ids:
+        if not (_member(u, node_ids) and _member(v, node_ids)):
             problem("K07_ENDPOINTS", loc, "Both endpoints must refer to existing nodes")
         if u == v and u is not None:
             problem("K07_SELF_LOOP", loc, "Self-loop requires separate explicit-review contract")
         state = edge.get("state")
-        if state not in STATES:
+        if not _member(state, STATES):
             problem("K08_STATE", loc, "Unknown edge review state")
         direction = edge.get("direction")
-        if direction not in DIRECTIONS:
+        if not _member(direction, DIRECTIONS):
             problem("K09_DIRECTION", loc, "Invalid direction")
         rel = edge.get("relationship")
-        if rel not in RELATIONSHIPS:
+        if not _member(rel, RELATIONSHIPS):
             problem("K10_RELATIONSHIP", loc, "Unsupported relationship taxonomy")
         evidence = edge.get("evidence", [])
         if not isinstance(evidence, list):
             problem("K11_EVIDENCE", loc, "Evidence must be a list")
             evidence = []
-        types = {x.get("type") for x in evidence if isinstance(x, dict)}
+        types = {x["type"] for x in evidence if isinstance(x, dict) and isinstance(x.get("type"), str)}
         if not evidence and state != "UNRESOLVED":
             problem("K11_EVIDENCE", loc, "Candidate or golden edge requires evidence")
         for j, ev in enumerate(evidence):
@@ -148,7 +153,7 @@ def receipt(doc: Any) -> Dict[str, Any]:
     # Count only validated arrays; K03_TYPE already reports any other value.
     nodes = nodes if isinstance(nodes, list) else []
     edges = edges if isinstance(edges, list) else []
-    tally = Counter(e.get("state") for e in edges if isinstance(e, dict))
+    tally = Counter(e["state"] for e in edges if isinstance(e, dict) and isinstance(e.get("state"), str))
     normalized = json.dumps(doc, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     return {
         "contract_version": CONTRACT_VERSION,

@@ -1,0 +1,36 @@
+name: gg-engine-w11-native-adapters
+on:
+  pull_request:
+    paths:
+      - 'gg_engine_w11/**'
+      - 'gg_engine_contract/**'
+      - 'dist/**'
+      - '.github/workflows/gg-engine-w11-native-adapters.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-adapters:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: W10 contract gates (reused, unchanged)
+        run: python -m unittest discover -s gg_engine_contract -p 'test_*.py' -v
+      - name: W11 native adapter tests (synthetic fixtures only)
+        run: python -m unittest discover -s gg_engine_w11 -p 'test_*.py' -v
+      - name: W10 source ZIP is unchanged by W11
+        shell: bash
+        run: |
+          python gg_engine_contract/package_release.py --output "$RUNNER_TEMP/gg_engine_w10.zip"
+          cmp "$RUNNER_TEMP/gg_engine_w10.zip" dist/gg_engine_w10_source.zip
+          (cd dist && sha256sum -c SHA256SUMS.txt)

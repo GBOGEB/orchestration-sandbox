@@ -60,7 +60,8 @@ def emit_svg(graph):
     a,b=names[edge['source_id']],names[edge['target_id']]
     return fx.svg_doc(fx.svg_shape('p101',a,a,transform='translate(0,40)'),
             fx.svg_shape('hx201',b,b,transform='translate(200,40)'),
-            fx.svg_connector('flow001','flow-001','p101','hx201',marker_end='ArrowEnd'))
+            fx.svg_connector('flow001','flow-001','p101','hx201',marker_end='ArrowEnd')).replace(
+                b'<text ',b'<text font-family="DejaVu Sans" ')
 
 
 def no_promotion(*graphs):
@@ -94,7 +95,7 @@ def archive(outdir,zip_path):
 def run(out,abacus_root=None):
     out=Path(out)
     out.mkdir(parents=True,exist_ok=True)
-    svg=fx.svg_flow()
+    svg=fx.svg_flow().replace(b'<text ',b'<text font-family="DejaVu Sans" ')
     graph0=read_svg(svg, name='source.svg', legend=fx.svg_legend(svg))
     pptx=emit_pptx(graph0)
     graph1=read_pptx(pptx,name='from_svg.pptx',legend=fx.pptx_legend(pptx))

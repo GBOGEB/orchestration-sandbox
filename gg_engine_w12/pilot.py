@@ -45,23 +45,65 @@ def supported_flow(graph):
     return names,edge
 
 
+def _shape_at(cid, name, text, x, y, width, height):
+    """Translate only the synthetic fixture shape geometry; preserve its native id."""
+    shape = fx.shape(cid, name, text)
+    return (shape.replace('<a:off x="0" y="0"/>',
+                          f'<a:off x="{x}" y="{y}"/>', 1)
+                 .replace('<a:ext cx="914400" cy="457200"/>',
+                          f'<a:ext cx="{width}" cy="{height}"/>', 1))
+
+
+def _layout_svg(raw):
+    """Position frozen synthetic SVG shapes for review without changing source IDs.
+
+    This is a two-object controlled fixture renderer, NOT a general layout engine.
+    Exact occurrence checks make input grammar drift fail closed.
+    """
+    replacements = [
+        (b'transform="translate(0,40)"', b'transform="translate(20,45)"', 1, 1),
+        (b'transform="translate(200,40)"', b'transform="translate(275,45)"', 1, 1),
+        (b'<rect x="0" y="0" width="60" height="30"',
+         b'<rect x="0" y="0" width="105" height="44"', 3, 2),
+        (b'd="M 60,15 L 200,15"', b'd="M 125,65 L 275,65"', 1, 1),
+        (b'<g id="layer2" inkscape:groupmode="layer" inkscape:label="Legend">',
+         b'<g id="layer2" inkscape:groupmode="layer" inkscape:label="Legend" '
+         b'transform="translate(20,135)">', 1, 1),
+        (b'<rect x="0" y="0" width="60" height="30"',
+         b'<rect x="0" y="0" width="190" height="35"', 1, 1),
+    ]
+    for before, after, expected, limit in replacements:
+        if raw.count(before) != expected:
+            raise ValueError('SYNTHETIC_FIXTURE_LAYOUT_DRIFT:' + before[:48].decode('ascii'))
+        raw = raw.replace(before, after, limit)
+    return raw.replace(b'<text ', b'<text font-family="DejaVu Sans" font-size="13" ')
+
+
 def emit_pptx(graph):
-    names,edge=supported_flow(graph)
-    # Source/target identity is controlled by the accepted W10 claim.
-    a,b=names[edge['source_id']],names[edge['target_id']]
-    # W11 fixture factory is only used as a transparent synthetic OOXML emitter.
-    return fx.pptx_bytes([fx.shape(4,a,a),fx.shape(5,b,b),
-        fx.connector(9,'flow-001',4,5,tail='triangle',color='0000FF'),
-        fx.shape(12,'Legend','Blue line = FLOW')])
+    names, edge = supported_flow(graph)
+    # Native connector ids / endpoint sites / arrowheads are NOT changed by
+    # re-spacing synthetic demonstration shapes. This is not a general renderer.
+    a, b = names[edge['source_id']], names[edge['target_id']]
+    start = _shape_at(4, a, a, 1000000, 2100000, 1600000, 750000)
+    end = _shape_at(5, b, b, 6000000, 2100000, 2000000, 750000)
+    line = (fx.connector(9, 'flow-001', 4, 5, tail='triangle', color='0000FF')
+            .replace('<a:off x="914400" y="228600"/>',
+                     '<a:off x="2600000" y="2475000"/>', 1)
+            .replace('<a:ext cx="914400" cy="0"/>',
+                     '<a:ext cx="3400000" cy="0"/>', 1))
+    legend = _shape_at(12, 'Legend', 'Blue line = FLOW',
+                       1000000, 4500000, 3800000, 850000)
+    return fx.pptx_bytes([start, end, line, legend])
 
 
 def emit_svg(graph):
-    names,edge=supported_flow(graph)
-    a,b=names[edge['source_id']],names[edge['target_id']]
-    return fx.svg_doc(fx.svg_shape('p101',a,a,transform='translate(0,40)'),
-            fx.svg_shape('hx201',b,b,transform='translate(200,40)'),
-            fx.svg_connector('flow001','flow-001','p101','hx201',marker_end='ArrowEnd')).replace(
-                b'<text ',b'<text font-family="DejaVu Sans" ')
+    names, edge = supported_flow(graph)
+    a, b = names[edge['source_id']], names[edge['target_id']]
+    return _layout_svg(fx.svg_doc(
+        fx.svg_shape('p101', a, a, transform='translate(0,40)'),
+        fx.svg_shape('hx201', b, b, transform='translate(200,40)'),
+        fx.svg_connector('flow001', 'flow-001', 'p101', 'hx201',
+                         marker_end='ArrowEnd')))
 
 
 def no_promotion(*graphs):
@@ -95,7 +137,7 @@ def archive(outdir,zip_path):
 def run(out,abacus_root=None):
     out=Path(out)
     out.mkdir(parents=True,exist_ok=True)
-    svg=fx.svg_flow().replace(b'<text ',b'<text font-family="DejaVu Sans" ')
+    svg=_layout_svg(fx.svg_flow())
     graph0=read_svg(svg, name='source.svg', legend=fx.svg_legend(svg))
     pptx=emit_pptx(graph0)
     graph1=read_pptx(pptx,name='from_svg.pptx',legend=fx.pptx_legend(pptx))

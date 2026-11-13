@@ -1,0 +1,130 @@
+{
+  "artifacts": {
+    "docx": {
+      "reason": "No owner document ingested in this public pilot",
+      "status": "DEFER"
+    },
+    "html": {
+      "path": "docs/gg_engine/w12/index.html",
+      "sha256": "20a4e073438036abd4ede8cc472eb40f90e5b2161ac9df136689ce4dcbffe4ab",
+      "status": "PASS"
+    },
+    "pdf": {
+      "path": "docs/gg_engine/w12/layered.pdf",
+      "sha256": "d30bfdf0a1dc0c7e3fcd816c647df57fbc886ecf63d777d405caea1c3580106a",
+      "status": "PASS"
+    },
+    "png": {
+      "reason": "No owner raster-oracle source attached",
+      "status": "DEFER"
+    },
+    "pptx": {
+      "path": "docs/gg_engine/w12/from_svg.pptx",
+      "sha256": "dd3ef2249062916adca1c7cadea72bae15221fcca47ded4626c2ffec0d863a85",
+      "status": "PASS"
+    },
+    "svg": {
+      "path": "docs/gg_engine/w12/source.svg",
+      "sha256": "7a8f49e8fe3ccf21c3a8ebac31e99caed6dbfa5c53ec903bc34cf0c457338560",
+      "status": "PASS"
+    },
+    "svg_roundtrip": {
+      "path": "docs/gg_engine/w12/roundtrip.svg",
+      "sha256": "7a8f49e8fe3ccf21c3a8ebac31e99caed6dbfa5c53ec903bc34cf0c457338560",
+      "status": "PASS"
+    },
+    "vsdx": {
+      "reason": "Read-only adapter tested on synthetic input only",
+      "status": "DEFER"
+    },
+    "xlsx": {
+      "reason": "No owner workbook ingested in this public pilot",
+      "status": "DEFER"
+    },
+    "zip": {
+      "path": "dist/gg_engine_w12_demo.zip",
+      "sha256": "cf76eb31df2eeecf7f88b159f8465fced7af798839d35e11a21ff6b40c768659",
+      "status": "PASS"
+    }
+  },
+  "checks": {
+    "acrobat_layer_panel": "DEFER",
+    "cross_format_parity": "PASS",
+    "formula_or_content": "DEFER",
+    "independent_human_review": "DEFER",
+    "microsoft_powerpoint_native_open": "DEFER",
+    "owner_semantic_acceptance": "DEFER",
+    "playwright": "PASS",
+    "render_visual": "PASS",
+    "structural": "PASS"
+  },
+  "defects_fixed": [
+    {
+      "description": "K4106 source requested font absent; added DejaVu Sans font declaration",
+      "id": "W12-D1"
+    },
+    {
+      "description": "HTML mobile SHA horizontal overflow; added overflow wrapping",
+      "id": "W12-D2"
+    },
+    {
+      "description": "SVG/PPTX fixture geometry overlapping; spaced shapes and reserved legend region",
+      "id": "W12-D3"
+    },
+    {
+      "description": "Nested parent OCG gates K4113/K4114 were NA; added synthetic hidden-parent and child",
+      "id": "W12-D4"
+    }
+  ],
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "execution_evidence": {
+    "ci_head": "2fac2133beed9c4dcb8c7e7b33f66b9558f118f1",
+    "ci_jobs": {
+      "dow_native_layered_pdf": "PASS",
+      "python_3_12": "PASS",
+      "python_3_9": "PASS"
+    },
+    "ci_run": "https://github.com/GBOGEB/orchestration-sandbox/actions/runs/43475021972",
+    "dow_checks": {
+      "defer_or_na": 0,
+      "fail": 0,
+      "pass": 11
+    },
+    "html_runtime_errors": 0,
+    "html_viewports": {
+      "desktop": "PASS",
+      "laptop": "PASS",
+      "mobile": "PASS"
+    },
+    "layered_pdf_ocgs": 4,
+    "semantic_graph_parity_hops": 2,
+    "visual_renders": {
+      "pdf_pymupdf": "PASS",
+      "pptx_libreoffice": "PASS",
+      "svg_cairosvg": "PASS"
+    },
+    "zip_crc": "PASS"
+  },
+  "notes": [
+    "The CI release binary will be compared byte for byte against this checked-in copy on the next head",
+    "DOW PDF independent CairoSVG/MuPDF oracle is implementation-independent but not human review",
+    "Semantic diagram positions in HTML are schematic, not recovered geometry",
+    "Generated views are derived evidence; they do not modify contract or owner engineering truth"
+  ],
+  "release_label": "gg_Engine W12 public synthetic native-object review pilot v0.1",
+  "residual_blockers": [
+    "ABACUS#2745 exact head not admission-green: Python 3.14 B9 changed-line diff coverage 1% below required 80%; canonical coverage and governance proof remain red",
+    "Public sources here are synthetic only; no owner-source native drawing pair",
+    "No Microsoft PowerPoint/Inkscape/Acrobat owner-app or native Acrobat layer-panel validation",
+    "No independent human DOW sign-off nor engineering owner authority",
+    "W13 10/50/200 real-binary scale pilot remains not qualified"
+  ],
+  "schema": "qps-artifact-qa/1.0",
+  "source": {
+    "abacus_engine_git_sha": "eca6782f9850b61c083c25a03371a7be74aa0a98",
+    "git_sha": "2fac2133beed9c4dcb8c7e7b33f66b9558f118f1",
+    "locator": "gg_engine_w11.synthetic_fixtures.svg_flow -> gg_engine_w12.pilot._layout_svg",
+    "sha256": "7a8f49e8fe3ccf21c3a8ebac31e99caed6dbfa5c53ec903bc34cf0c457338560",
+    "source_type": "SYNTHETIC_ONLY_NOT_OWNER_ENGINEERING_DRAWING"
+  }
+}

@@ -6,6 +6,9 @@ on:
       - 'gg_engine_w11/**'
       - 'gg_engine_contract/**'
       - '.github/workflows/gg-engine-w12-convergence.yml'
+      - 'dist/gg_engine_w12_demo.zip'
+      - 'dist/SHA256SUMS_W12.txt'
+      - 'docs/gg_engine/w12/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -60,6 +63,16 @@ jobs:
           python gg_engine_w12/pilot.py --out "$RUNNER_TEMP/w12-dow" --abacus-root "$GITHUB_WORKSPACE/_dow/ABACUS"
           (cd "$RUNNER_TEMP/w12-dow" && sha256sum -c SHA256SUMS.txt)
           python -c 'import os,fitz; p=os.path.join(os.environ["RUNNER_TEMP"],"w12-dow","layered.pdf"); d=fitz.open(p); assert len(d)>0 and len(d.get_ocgs())>=1'
+      - name: Check committed W12 binaries and review page against this exact native build
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmp "$RUNNER_TEMP/w12-dow/gg_engine_w12_demo.zip" dist/gg_engine_w12_demo.zip
+          (cd dist && sha256sum -c SHA256SUMS_W12.txt)
+          for n in source.svg roundtrip.svg from_svg.pptx layered.pdf flat_baseline.pdf index.html SHA256SUMS.txt dow_fidelity_receipt.json roundtrip_receipt.json; do
+            cmp "$RUNNER_TEMP/w12-dow/$n" "docs/gg_engine/w12/$n"
+          done
+          python -c 'import json; r=json.load(open("docs/gg_engine/w12/QA_RECEIPT.json")); assert r["checks"]["owner_semantic_acceptance"]=="DEFER"'
       - name: Save reviewed native artifacts and receipts (not owner evidence)
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # upload-artifact v7

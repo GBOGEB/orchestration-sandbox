@@ -1,0 +1,83 @@
+{
+  "checks": [
+    {
+      "evidence": "4 OCGs for 4 native layers",
+      "id": "SVG-W2:K4001",
+      "result": "PASS",
+      "title": "4 native OCGs"
+    },
+    {
+      "evidence": "mismatches=[]",
+      "id": "SVG-W2:K4102",
+      "result": "PASS",
+      "title": "OCG defaults equal each layer's own source style"
+    },
+    {
+      "evidence": "4 entries; parent mismatches=[]",
+      "id": "SVG-W2:K4111",
+      "result": "PASS",
+      "title": "Nested layer panel (/Order) mirrors native hierarchy"
+    },
+    {
+      "evidence": "{\"similarity\": 1.0, \"bad_px\": 0, \"max\": 1, \"mean\": 0.029}",
+      "id": "SVG-W2:K4201",
+      "result": "PASS",
+      "title": "Default page 1 vs source SVG"
+    },
+    {
+      "evidence": "{\"similarity\": 1.0, \"bad_px\": 0, \"max\": 0, \"mean\": 0.0}",
+      "id": "SVG-W2:K4105",
+      "result": "PASS",
+      "title": "No default-visibility leakage vs baseline built on the same toolchain"
+    },
+    {
+      "evidence": "requested=['dejavusans']; embedded=['DejaVuSans']; substituted=[]",
+      "id": "SVG-W2:K4106",
+      "result": "PASS",
+      "title": "Embedded fonts are source-requested families (no substitution)"
+    },
+    {
+      "evidence": "4/4 within tol22 at >=0.99999; failures=[]",
+      "id": "SVG-W2:K4112",
+      "result": "PASS",
+      "title": "Each of 4 layer switches matches source display semantics (parents cascade)"
+    },
+    {
+      "evidence": "3/4 change pixels; no effect: ['layer1-hidden-child'] (expected: children of hidden parents or empty wrappers)",
+      "id": "SVG-W2:K4101",
+      "result": "PASS",
+      "title": "Switches with a visible effect"
+    },
+    {
+      "evidence": "{\"layer1\": {\"off_vs_oracle\": {\"similarity\": 1.0, \"bad_px\": 0, \"max\": 1, \"mean\": 0.0059}, \"restore_identical\": true, \"descendants\": 2}}",
+      "id": "SVG-W2:K4113",
+      "result": "PASS",
+      "title": "Parent OFF hides whole subtree; parent ON restores own child states"
+    },
+    {
+      "evidence": "{\"layer1-hidden\": {\"similarity\": 1.0, \"bad_px\": 0, \"max\": 1, \"mean\": 0.0308}}",
+      "id": "SVG-W2:K4114",
+      "result": "PASS",
+      "title": "Turning on a source-hidden parent shows children by their own states"
+    },
+    {
+      "evidence": "d30bfdf0a1dc0c7e3fcd816c647df57fbc886ecf63d777d405caea1c3580106a",
+      "id": "SVG-W2:K5001",
+      "result": "PASS",
+      "title": "Built PDF SHA equals build report"
+    }
+  ],
+  "engine": "DMAIC_V3.svg_engine",
+  "engine_admission": "ABACUS_PR_2745_STILL_SEPARATELY_GATED",
+  "engine_git_sha": "eca6782f9850b61c083c25a03371a7be74aa0a98",
+  "engineering_acceptance": "HOLD",
+  "failures": [],
+  "native_acrobat_layer_panel": "NOT_TESTED",
+  "ocg_count": 4,
+  "pdf_sha256": "d30bfdf0a1dc0c7e3fcd816c647df57fbc886ecf63d777d405caea1c3580106a",
+  "schema": "gg-w12-dow-bridge-0.1",
+  "source_layer_count": 4,
+  "source_svg_sha256": "7a8f49e8fe3ccf21c3a8ebac31e99caed6dbfa5c53ec903bc34cf0c457338560",
+  "source_validation": "NATIVE_SOURCE_SAFETY_PASSED",
+  "status": "PASS_REVIEW_ONLY"
+}

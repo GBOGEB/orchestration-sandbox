@@ -18,7 +18,7 @@
 | **Owner and decision authority** | Repository owner **GBOGEB**: admission to the default branch, releases and every external grant. No agent, bot or CI verdict holds this authority. |
 | **Role in the federation** | The *public sandbox*: public-safe, synthetic-only copies of pilot code for review; private sources stay in private repos. |
 | **Owns** | `gg_engine_contract/` (W10), `gg_engine_w11/`, `gg_engine_w12/`, the HTML review navigator and the `dist/` bundles with SHA-256 sums |
-| **Does not own** | The DOW SVG engine (ABACUS, pinned by SHA) · real owner drawings, legends and engineering SSOT (cryoplant-project) · KEB receipts (CODEX) |
+| **Does not own** | The DOW SVG engine (ABACUS, pinned by SHA) · real owner drawings, legends and engineering SSOT (owner-controlled, private) · KEB receipts (CODEX) |
 | **Status snapshot** | `main@5b24167`, read 15 November 2026 — 0 open issues, 0 open PRs. [Details ↓](#6-status-and-open-gates) |
 
 **New here?** Read [§1](#1-why-orchestration-sandbox-exists--bios), then the route that matches you:
@@ -69,7 +69,7 @@
 | Neighbour | Keeps | Interface with orchestration-sandbox |
 |---|---|---|
 | [ABACUS](https://github.com/GBOGEB/ABACUS) | DMAIC runtime, CI repair at source | W12 imports `DMAIC_V3.svg_engine` at a pinned SHA |
-| [cryoplant-project](https://github.com/GBOGEB/cryoplant-project) (private) | QPS engineering SSOT and release identity | Real drawings and legends; not in this public repo |
+| Owner-controlled private SSOT | Engineering drawings, legends and acceptance | Never mirrored here; private runs happen there |
 | [CODEX](https://github.com/GBOGEB/CODEX) | Federation governance, contracts, wave roll-up | KEB receipts: not issued |
 
 ## 5. Process diagrams
@@ -109,7 +109,7 @@ python -m unittest discover -s gg_engine_w12 -p 'test_*.py' -v
 python gg_engine_w12/pilot.py --out w12-out
 ```
 
-Verify bundles with `sha256sum -c dist/SHA256SUMS.txt` and `dist/SHA256SUMS_W12.txt`. The W12 DOW bridge needs an ABACUS checkout at the SHA in [`PINNED_UPSTREAM.json`](gg_engine_w12/PINNED_UPSTREAM.json).
+Verify bundles from inside `dist/` (the sum files list bare filenames): `(cd dist && sha256sum -c SHA256SUMS.txt && sha256sum -c SHA256SUMS_W12.txt)`. The W12 DOW bridge needs an ABACUS checkout at the SHA in [`PINNED_UPSTREAM.json`](gg_engine_w12/PINNED_UPSTREAM.json).
 
 ## 8. Evidence rules and non-compensation
 
